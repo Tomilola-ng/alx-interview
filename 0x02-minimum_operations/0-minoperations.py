@@ -10,6 +10,7 @@ Function:
     def min_operations(target_count: int) -> int
 """
 
+
 def min_operations(target_count: int) -> int:
     """
     Calculate the minimum number of operations required to achieve exactly
