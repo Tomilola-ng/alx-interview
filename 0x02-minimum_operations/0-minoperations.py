@@ -10,7 +10,7 @@ Function:
     def min_operations(target_count: int) -> int
 """
 
-def min_operations(target_count: int) -> int:
+def minOperations(target_count: int) -> int:
     """
     Calculate the minimum number of operations required to achieve exactly
     'target_count' H characters in a file.
