@@ -1,62 +1,50 @@
 #!/usr/bin/python3
 
 """
-    STATs
+    CODE DOCUMENTATIONS
+    VERY USEFUL CODE
 """
 
 import sys
 import re
-import signal
+from collections import defaultdict
 
-def print_statistics(total_size, status_codes):
-    """ Print statistics """
+def print_stats(total_size, status_codes):
+    """ PRINT STATS """
     print(f"File size: {total_size}")
     for code in sorted(status_codes.keys()):
         if status_codes[code] > 0:
             print(f"{code}: {status_codes[code]}")
 
-def signal_handler(sig, frame):
-    """ Handle CTRL+C """
-    print_statistics(total_size, status_codes)
-    sys.exit(0)
+def parse_line(line):
+    """ PARSE LINE """
+    pattern = r'^(\S+) - \[(.+)\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$'
+    match = re.match(pattern, line)
+    if match:
+        ip, date, status, file_size = match.groups()
+        return int(status), int(file_size)
+    return None, None
 
 def main():
-    """ Main function """
-    global total_size, status_codes
+    """ MAIN FUNCTION """
     total_size = 0
-    status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
     line_count = 0
+    status_codes = defaultdict(int)
 
-    # Set up signal handling
-    signal.signal(signal.SIGINT, signal_handler)
-
-    pattern = r'^\S+ - \[.+\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$'
-
-    for line in sys.stdin:
-        try:
-            match = re.match(pattern, line.strip())
-            if match:
-                status_code = int(match.group(1))
-                file_size = int(match.group(2))
-                
+    try:
+        for line in sys.stdin:
+            status, file_size = parse_line(line.strip())
+            if status is not None and file_size is not None:
                 total_size += file_size
-                if status_code in status_codes:
-                    status_codes[status_code] += 1
-
+                status_codes[status] += 1
                 line_count += 1
 
-                if line_count % 10 == 0:
-                    print_statistics(total_size, status_codes)
+            if line_count % 10 == 0:
+                print_stats(total_size, status_codes)
 
-        except KeyboardInterrupt:
-            # This should not be needed due to signal handling, but kept for safety
-            break
-        except:
-            # Skip lines that don't match the expected format
-            continue
-
-    # Print final statistics
-    print_statistics(total_size, status_codes)
+    except KeyboardInterrupt:
+        print_stats(total_size, status_codes)
+        raise
 
 if __name__ == "__main__":
     main()
