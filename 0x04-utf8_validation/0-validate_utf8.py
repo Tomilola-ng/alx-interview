@@ -5,13 +5,14 @@
 
 from typing import Union
 
+
 def validUTF8(data) -> Union[bool, None]:
     """
     Checks if the given data represents valid UTF-8 encoding.
-    
+
     Args:
         data (list): A list of integers representing bytes.
-        
+
     Returns:
         bool: True if data is valid UTF-8 encoding, False otherwise.
     """
