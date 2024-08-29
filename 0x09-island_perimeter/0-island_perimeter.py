@@ -16,6 +16,7 @@
     connected to the water surrounding the island).
 """
 
+
 def island_perimeter(grid):
     """
         MAIN FUNCTION
