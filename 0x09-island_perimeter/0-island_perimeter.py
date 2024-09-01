@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """
     Create a function def island_perimeter(grid):
     that returns the perimeter of the island described in grid:
@@ -21,4 +22,21 @@ def island_perimeter(grid):
     """
         MAIN FUNCTION
     """
-    return 12
+    perimeter = 0
+
+    # pylint: disable=consider-using-enumerate
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == 1:
+                # Add 4 for each land cell
+                perimeter += 4
+
+                # Check the cell above (if it exists)
+                if i > 0 and grid[i - 1][j] == 1:
+                    perimeter -= 2  # Subtract 2 for the shared edge
+
+                # Check the cell to the left (if it exists)
+                if j > 0 and grid[i][j - 1] == 1:
+                    perimeter -= 2  # Subtract 2 for the shared edge
+
+    return perimeter
