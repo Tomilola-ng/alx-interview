@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Prime Game Module"""
 
+
 def isWinner(rounds, numbers):
     """
     Determines the overall winner of a prime number selection game.
@@ -27,7 +28,7 @@ def isWinner(rounds, numbers):
     # Array to store prime number indicators, based on the maximum number
     max_number = max(numbers)
     prime_array = [1] * (max_number + 1)
-    
+
     # Mark non-prime numbers (0 and 1) explicitly
     prime_array[0], prime_array[1] = 0, 0
 
@@ -67,6 +68,7 @@ def mark_non_primes(array, num):
             array[i * num] = 0
         except (ValueError, IndexError):
             break  # Stop if index goes out of bounds
+
 
 if __name__ == "__main__":
     print("Winner: {}".format(determine_winner(5, [2, 5, 1, 4, 3])))
