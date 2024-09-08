@@ -1,60 +1,72 @@
 #!/usr/bin/python3
-"""Module that defines a function to determine the winner of a prime number game."""
+"""Prime Game Module"""
 
-def determine_winner(rounds, nums):
-    """Evaluates the winner of the prime number game after several rounds."""
-    maria_wins = 0
-    ben_wins = 0
+def isWinner(rounds, numbers):
+    """
+    Determines the overall winner of a prime number selection game.
 
-    for num in nums:
-        available_numbers = list(range(1, num + 1))
-        primes_list = find_primes(1, num)
+    Args:
+        rounds (int): Number of game rounds to be played.
+        numbers (list of int): List where each value represents the range
+        of numbers from 1 to n in each round.
 
-        if not primes_list:
-            ben_wins += 1
-            continue
-
-        maria_turn = True
-
-        while True:
-            if not primes_list:
-                if maria_turn:
-                    ben_wins += 1
-                else:
-                    maria_wins += 1
-                break
-
-            smallest_prime = primes_list.pop(0)
-            available_numbers.remove(smallest_prime)
-
-            available_numbers = [n for n in available_numbers if n % smallest_prime != 0]
-
-            maria_turn = not maria_turn
-
-    if maria_wins > ben_wins:
-        return "Winner: Maria"
-    elif ben_wins > maria_wins:
-        return "Winner: Ben"
-    else:
+    Returns:
+        str: The name of the player with the most victories ("Ben" or "Maria").
+        If it's a tie or no winner can be determined, returns None.
+    """
+    # Validate input
+    if rounds <= 0 or not numbers:
+        return None
+    if rounds != len(numbers):
         return None
 
+    # Track scores for each player
+    ben_score = 0
+    maria_score = 0
 
-def is_prime(n):
-    """Checks whether a number is prime."""
-    if n < 2:
-        return False
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
+    # Array to store prime number indicators, based on the maximum number
+    max_number = max(numbers)
+    prime_array = [1] * (max_number + 1)
+    
+    # Mark non-prime numbers (0 and 1) explicitly
+    prime_array[0], prime_array[1] = 0, 0
+
+    # Use Sieve of Eratosthenes to mark non-prime numbers in the array
+    for i in range(2, len(prime_array)):
+        mark_non_primes(prime_array, i)
+
+    # Iterate through each round and tally wins for each player
+    for num in numbers:
+        if sum(prime_array[:num + 1]) % 2 == 0:
+            ben_score += 1  # Ben wins if prime count is even
+        else:
+            maria_score += 1  # Maria wins if prime count is odd
+
+    # Determine the overall winner
+    if ben_score > maria_score:
+        return "Ben"
+    if maria_score > ben_score:
+        return "Maria"
+    return None
 
 
-def find_primes(start, end):
-    """Returns a list of prime numbers within a given range."""
-    return [n for n in range(start, end + 1) if is_prime(n)]
+def mark_non_primes(array, num):
+    """
+    Marks multiples of a prime number as non-prime in the given list.
 
+    Args:
+        array (list of int): Array where prime numbers are marked with 1.
+        num (int): Prime number for which multiples are to be marked.
 
-# Sample Test Script
+    Returns:
+        None.
+    """
+    # Mark multiples of 'num' as non-prime (set to 0)
+    for i in range(2, len(array)):
+        try:
+            array[i * num] = 0
+        except (ValueError, IndexError):
+            break  # Stop if index goes out of bounds
 
 if __name__ == "__main__":
     print("Winner: {}".format(determine_winner(5, [2, 5, 1, 4, 3])))
